@@ -2,7 +2,17 @@
 - author: "Tomonori Nagano"
 - date: "2026-01-20"
 
-<link rel="stylesheet" href="assets/style.css">
+<style>
+.analysis-alt {
+  font-family: "Georgia", serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  background: #f6f3e9;
+  border-left: 4px solid #c49a6c;
+  padding: 12px 12px 6px 12px;
+  margin: 4px 0 16px 0;
+}
+</style>
 
 ## Introduction
 
