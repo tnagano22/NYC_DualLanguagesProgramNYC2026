@@ -60,8 +60,6 @@ program_2024_2025 <- program_2024_2025 %>% mutate(SourceYear = "2024-2025")
 - Data normalization process is omitted in the knit document. See the source RMarkdown for the normaliztaion procedures.
 
 
-
-<div style="height:40px"></div>
 ### Overall numbers
 
 > [!NOTE] 
@@ -118,7 +116,6 @@ language_by_year_table <- language_by_year %>%
 ```
 
 
-<div style="height:40px"></div>
 ### By languages
 
 > [!NOTE] 
@@ -230,7 +227,6 @@ borough_by_year <- programs_all %>%
 write_csv(borough_by_year, file.path(output_dir, "borough_by_year.csv"))
 ```
 
-<div style="height:40px"></div>
 ### By boroughs
 
 > [!NOTE] 
@@ -305,7 +301,6 @@ borough_by_year %>%
 
 ![](images/figure-html/borough-over-time-plot-SI-1.png)<!-- -->
 
-<div style="height:40px"></div>
 ### Languages in each borough
 
 > [!NOTE] 
