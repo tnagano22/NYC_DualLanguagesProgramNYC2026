@@ -1,12 +1,6 @@
----
-title: "Dual Language Programs in NYC Public Schools between 2017-2024"
-author: "Tomonori Nagano"
-date: "2024-06-22"
-output:
-  html_document:
-    keep_md: yes
-    css: assets/styles.css
----
+- title: "Dual Language Programs in NYC Public Schools between 2017-2024"
+- author: "Tomonori Nagano"
+- date: "2026-01-20"
 
 ## Introduction
 
