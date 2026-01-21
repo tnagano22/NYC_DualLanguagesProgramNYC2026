@@ -8,8 +8,8 @@ This analysis compares bilingual/dual language programs available across five bo
 
 ## Data
 
-[!IMPORTANT]
-<b>My comments</b>: Data about bilingual/dual language programs are available on the NYC Open Data (between 2017-2021) and on the NYC DOE InfoHub (after 2022).
+> [!NOTE] 
+> <b>My comments</b>: Data about bilingual/dual language programs are available on the NYC Open Data (between 2017-2021) and on the NYC DOE InfoHub (after 2022).
 
 Raw program lists and LEP language counts are loaded from these project files:
 
