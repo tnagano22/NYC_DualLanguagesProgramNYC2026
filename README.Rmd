@@ -48,12 +48,39 @@ Data notes:
 
 ## Analysis Scripts
 
+```{r setup, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
+library(dplyr)
+library(readr)
+library(readxl)
+library(stringr)
+library(ggplot2)
 
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.title = element_text(face = "bold", size = 13, margin = margin(b = 6)),
+      plot.subtitle = element_text(size = 10, margin = margin(b = 8)),
+      axis.title = element_text(size = 11),
+      axis.text = element_text(color = "#2c2c2c"),
+      panel.grid.minor = element_blank(),
+      panel.grid.major.x = element_blank(),
+      legend.position = "bottom",
+      legend.title = element_text(size = 10),
+      legend.text = element_text(size = 9)
+    )
+)
+```
 
+```{r output-dir, echo=FALSE, message=FALSE}
+output_dir <- "output"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+```
 
-
-``` r
+```{r load-programs}
 program_2017_2018 <- read_csv("data/raw/anticipated_bilingual_programs_2017_2018.csv")
 program_2020_2021 <- read_csv("data/raw/bilingual_program_list_2020_2021.csv")
 program_2021_2022 <- read_csv("data/raw/bilingual_program_list_2021_2022.csv")
@@ -70,7 +97,123 @@ program_2024_2025 <- program_2024_2025 %>% mutate(SourceYear = "2024-2025")
 ```
 
 - Data normalization process is omitted in the knit document. See the source RMarkdown for the normaliztaion procedures.
+```{r normalize, echo=FALSE, message=FALSE}
+clean_names <- function(x) {
+  x <- str_trim(x)
+  x <- str_replace_all(x, "[^A-Za-z0-9]+", "_")
+  x <- str_replace_all(x, "^_|_$", "")
+  tolower(x)
+}
 
+names(program_2017_2018) <- clean_names(names(program_2017_2018))
+names(program_2020_2021) <- clean_names(names(program_2020_2021))
+names(program_2021_2022) <- clean_names(names(program_2021_2022))
+names(program_2022_2023) <- clean_names(names(program_2022_2023))
+names(program_2023_2024) <- clean_names(names(program_2023_2024))
+names(program_2024_2025) <- clean_names(names(program_2024_2025))
+
+borough_from_dbn <- function(dbn) {
+  borough_code <- str_sub(dbn, 3, 3)
+  recode(
+    borough_code,
+    "M" = "Manhattan",
+    "X" = "Bronx",
+    "K" = "Brooklyn",
+    "Q" = "Queens",
+    "R" = "Staten Island",
+    .default = NA_character_
+  )
+}
+
+normalize_language <- function(x) {
+  x <- str_squish(x)
+  x <- str_replace(
+    x,
+    regex("^american sign language(.*)$|^sign language \\(american\\)$", ignore_case = TRUE),
+    "ASL"
+  )
+  na_if(x, "")
+}
+
+program_2017_2018_norm <- program_2017_2018 %>%
+  transmute(
+    SourceYear = sourceyear,
+    dbn = dbn,
+    school_name = school_name,
+    program = program,
+    language = normalize_language(language),
+    district = str_pad(str_sub(dbn, 1, 2), 2, pad = "0"),
+    borough = borough_from_dbn(dbn)
+  )
+
+program_2020_2021_norm <- program_2020_2021 %>%
+  transmute(
+    SourceYear = sourceyear,
+    dbn = school,
+    school_name = school_name,
+    program = program,
+    language = normalize_language(language),
+    district = str_pad(as.character(district), 2, pad = "0"),
+    borough = normalize_language(borough)
+  )
+
+program_2021_2022_norm <- program_2021_2022 %>%
+  transmute(
+    SourceYear = sourceyear,
+    dbn = school,
+    school_name = school_name,
+    program = program,
+    language = normalize_language(language),
+    district = str_pad(as.character(district), 2, pad = "0"),
+    borough = normalize_language(borough)
+  )
+
+program_2022_2023_norm <- program_2022_2023 %>%
+  transmute(
+    SourceYear = sourceyear,
+    dbn = school,
+    school_name = school_name,
+    program = program,
+    language = normalize_language(language),
+    district = str_pad(as.character(district), 2, pad = "0"),
+    borough = normalize_language(borough)
+  )
+
+program_2023_2024_norm <- program_2023_2024 %>%
+  transmute(
+    SourceYear = sourceyear,
+    dbn = school,
+    school_name = school_name,
+    program = program,
+    language = normalize_language(language),
+    district = str_pad(as.character(district), 2, pad = "0"),
+    borough = normalize_language(borough)
+  )
+
+program_2024_2025_norm <- program_2024_2025 %>%
+  transmute(
+    SourceYear = sourceyear,
+    dbn = school,
+    school_name = school_name,
+    program = program,
+    language = normalize_language(language),
+    district = str_pad(as.character(district), 2, pad = "0"),
+    borough = normalize_language(borough)
+  )
+
+programs_all <- bind_rows(
+  program_2017_2018_norm,
+  program_2020_2021_norm,
+  program_2021_2022_norm,
+  program_2022_2023_norm,
+  program_2023_2024_norm,
+  program_2024_2025_norm
+) %>%
+  mutate(
+    borough_district = if_else(!is.na(borough) & !is.na(district), str_c(borough, "-", district), NA_character_),
+    year_start = as.integer(str_sub(SourceYear, 1, 4))
+  )
+```
 
 
 <div style="height:40px"></div>
@@ -81,8 +224,7 @@ program_2024_2025 <- program_2024_2025 %>% mutate(SourceYear = "2024-2025")
 
 - Count total program rows by year to show overall volume trends.
 
-
-``` r
+```{r counts}
 program_counts <- programs_all %>%
   count(SourceYear, name = "ProgramRows") %>%
   arrange(SourceYear)
@@ -90,21 +232,8 @@ program_counts <- programs_all %>%
 program_counts
 ```
 
-```
-## # A tibble: 6 × 2
-##   SourceYear ProgramRows
-##   <chr>            <int>
-## 1 2017-2018          508
-## 2 2020-2021          538
-## 3 2021-2022          538
-## 4 2022-2023          557
-## 5 2023-2024          559
-## 6 2024-2025          566
-```
-
 - Tabulate program rows by language and year, then display the top 5 languages per year.
-
-``` r
+```{r languages-by-year}
 language_by_year <- programs_all %>%
   filter(!is.na(language), !is.na(year_start)) %>%
   count(year_start, language, name = "ProgramRows") %>%
@@ -112,14 +241,12 @@ language_by_year <- programs_all %>%
 ```
 
 - Save language-by-year counts to CSV for downstream use.
-
-``` r
+```{r save-language-by-year}
 write_csv(language_by_year, file.path(output_dir, "language_by_year.csv"))
 ```
 
 - Pivot language counts into a wide year-by-language table.
-
-``` r
+```{r table-year-language}
 language_by_year_table <- language_by_year %>%
   tidyr::pivot_wider(
     names_from = language,
@@ -137,8 +264,7 @@ language_by_year_table <- language_by_year %>%
 </div>
 
 - Transpose the table to show all languages as rows and years as columns.
-
-``` r
+```{r table-language-year}
 language_by_year_table_t <- language_by_year_table %>%
   tibble::column_to_rownames("year_start") %>%
   t() %>%
@@ -147,28 +273,8 @@ language_by_year_table_t <- language_by_year_table %>%
 language_by_year_table_t
 ```
 
-```
-##                          2017 2020 2021 2022 2023 2024
-## Spanish                   399  430  427  447  452  460
-## Chinese                    66   66   68   69   68   68
-## French                     10   12   12   11    9    9
-## Bengali                     6    4    5    5    5    5
-## Haitian Creole              6    3    3    4    4    3
-## Yiddish                     6    7    6    4    4    4
-## Arabic                      5    4    4    3    2    2
-## Russian                     5    5    5    5    6    6
-## Hebrew                      1    0    0    0    0    0
-## Japanese                    1    1    1    1    0    0
-## Korean                      1    1    1    1    1    1
-## Polish                      1    2    3    3    3    3
-## Urdu                        1    0    0    0    0    0
-## Italian                     0    3    3    4    5    4
-## (American) Sign Language    0    0    0    0    0    1
-```
-
 - Save the year-by-language table to CSV.
-
-``` r
+```{r save-year-language}
 write_csv(language_by_year_table, file.path(output_dir, "year_by_language.csv"))
 ```
 
@@ -177,8 +283,7 @@ write_csv(language_by_year_table, file.path(output_dir, "year_by_language.csv"))
 </div>
 
 - Plot top languages over time to visualize trends.
-
-``` r
+```{r languages-by-year-plot}
 spanish <- language_by_year %>%
   filter(language == "Spanish")
 
@@ -191,11 +296,7 @@ ggplot(spanish, aes(x = year_start, y = ProgramRows)) +
     x = "Year (Start)",
     y = "Program Rows"
   )
-```
 
-![](images/figure-html/languages-by-year-plot-1.png)<!-- -->
-
-``` r
 language_by_year %>%
   filter(language != "Spanish") %>%
   ggplot(aes(x = year_start, y = ProgramRows, color = language)) +
@@ -211,11 +312,8 @@ language_by_year %>%
   )
 ```
 
-![](images/figure-html/languages-by-year-plot-2.png)<!-- -->
-
 - Count languages by borough and year, then list top 5 per borough.
-
-``` r
+```{r languages-by-borough}
 language_by_borough <- programs_all %>%
   filter(!is.na(borough), !is.na(language)) %>%
   count(SourceYear, borough, language, name = "ProgramRows") %>%
@@ -223,14 +321,12 @@ language_by_borough <- programs_all %>%
 ```
 
 - Save language-by-borough counts to CSV.
-
-``` r
+```{r save-language-by-borough}
 write_csv(language_by_borough, file.path(output_dir, "language_by_borough.csv"))
 ```
 
 - Count total program rows by borough over time.
-
-``` r
+```{r borough-over-time}
 borough_by_year <- programs_all %>%
   filter(!is.na(borough), !is.na(year_start)) %>%
   count(year_start, borough, name = "ProgramRows") %>%
@@ -238,8 +334,7 @@ borough_by_year <- programs_all %>%
 ```
 
 - Save borough-by-year counts to CSV.
-
-``` r
+```{r save-borough-by-year}
 write_csv(borough_by_year, file.path(output_dir, "borough_by_year.csv"))
 ```
 
@@ -250,8 +345,7 @@ write_csv(borough_by_year, file.path(output_dir, "borough_by_year.csv"))
 </div>
 
 - Pivot borough counts into a wide year-by-borough table.
-
-``` r
+```{r table-year-borough}
 borough_by_year_table <- borough_by_year %>%
   tidyr::pivot_wider(
     names_from = borough,
@@ -263,27 +357,13 @@ borough_by_year_table <- borough_by_year %>%
 borough_by_year_table
 ```
 
-```
-## # A tibble: 6 × 6
-##   year_start Bronx Brooklyn Manhattan Queens `Staten Island`
-##        <int> <int>    <int>     <int>  <int>           <int>
-## 1       2017   127      157       109    103              12
-## 2       2020   141      161       107    116              13
-## 3       2021   134      159       110    121              14
-## 4       2022   137      164       108    134              14
-## 5       2023   132      164       112    137              14
-## 6       2024   128      170       113    140              15
-```
-
 - Save the year-by-borough table to CSV.
-
-``` r
+```{r save-year-borough}
 write_csv(borough_by_year_table, file.path(output_dir, "year_by_borough.csv"))
 ```
 
 - Plot program rows by borough over time.
-
-``` r
+```{r borough-over-time-plot}
 borough_by_year %>%
   filter(borough != "Staten Island") %>%
   ggplot(aes(x = year_start, y = ProgramRows, color = borough)) +
@@ -299,10 +379,7 @@ borough_by_year %>%
   )
 ```
 
-![](images/figure-html/borough-over-time-plot-1.png)<!-- -->
-
-
-``` r
+```{r borough-over-time-plot-SI}
 borough_by_year %>%
   filter(borough == "Staten Island") %>%
   ggplot(aes(x = year_start, y = ProgramRows)) +
@@ -316,8 +393,6 @@ borough_by_year %>%
   )
 ```
 
-![](images/figure-html/borough-over-time-plot-SI-1.png)<!-- -->
-
 <div style="height:40px"></div>
 ### Languages in each borough
 <div class="analysis-alt">
@@ -325,8 +400,7 @@ borough_by_year %>%
 </div>
 
 - Plot top languages by borough for the latest year.
-
-``` r
+```{r languages-by-borough-plot}
 years <- sort(unique(language_by_borough$SourceYear))
 
 for (yr in years) {
@@ -351,11 +425,8 @@ for (yr in years) {
 }
 ```
 
-![](images/figure-html/languages-by-borough-plot-1.png)<!-- -->![](images/figure-html/languages-by-borough-plot-2.png)<!-- -->![](images/figure-html/languages-by-borough-plot-3.png)<!-- -->![](images/figure-html/languages-by-borough-plot-4.png)<!-- -->![](images/figure-html/languages-by-borough-plot-5.png)<!-- -->![](images/figure-html/languages-by-borough-plot-6.png)<!-- -->
-
 - Table view of top languages by borough for each year.
-
-``` r
+```{r languages-by-borough-table}
 boroughs <- sort(unique(language_by_borough$borough))
 
 for (b in boroughs) {
@@ -372,76 +443,6 @@ for (b in boroughs) {
   cat("\n\nBorough: ", b, "\n\n", sep = "")
   print(table_data)
 }
-```
-
-```
-## 
-## 
-## Borough: Bronx
-## 
-## # A tibble: 6 × 4
-##   SourceYear Spanish Arabic Bengali
-##   <chr>        <int>  <int>   <int>
-## 1 2017-2018      125      1       1
-## 2 2020-2021      140      0       1
-## 3 2021-2022      133      0       1
-## 4 2022-2023      136      0       1
-## 5 2023-2024      131      0       1
-## 6 2024-2025      127      0       1
-## 
-## 
-## Borough: Brooklyn
-## 
-## # A tibble: 6 × 14
-##   SourceYear Spanish Chinese French `Haitian Creole` Yiddish Arabic Russian
-##   <chr>        <int>   <int>  <int>            <int>   <int>  <int>   <int>
-## 1 2017-2018       94      30      8                6       6      4       4
-## 2 2020-2021       99      29     10                3       7      4       4
-## 3 2021-2022       97      29     10                3       6      4       4
-## 4 2022-2023      105      29      9                4       4      3       4
-## 5 2023-2024      106      30      7                4       4      2       5
-## 6 2024-2025      109      34      7                3       4      2       5
-## # ℹ 6 more variables: Bengali <int>, Hebrew <int>, Japanese <int>,
-## #   Polish <int>, Urdu <int>, Italian <int>
-## 
-## 
-## Borough: Manhattan
-## 
-## # A tibble: 6 × 7
-##   SourceYear Spanish Chinese French Russian Italian `(American) Sign Language`
-##   <chr>        <int>   <int>  <int>   <int>   <int>                      <int>
-## 1 2017-2018       91      15      2       1       0                          0
-## 2 2020-2021       91      12      2       1       1                          0
-## 3 2021-2022       93      13      2       1       1                          0
-## 4 2022-2023       91      12      2       1       2                          0
-## 5 2023-2024       96      11      2       1       2                          0
-## 6 2024-2025       98      10      2       1       1                          1
-## 
-## 
-## Borough: Queens
-## 
-## # A tibble: 6 × 6
-##   SourceYear Spanish Chinese Bengali Korean Polish
-##   <chr>        <int>   <int>   <int>  <int>  <int>
-## 1 2017-2018       77      21       4      1      0
-## 2 2020-2021       87      25       2      1      1
-## 3 2021-2022       90      26       2      1      2
-## 4 2022-2023      101      28       2      1      2
-## 5 2023-2024      105      27       2      1      2
-## 6 2024-2025      111      24       2      1      2
-## 
-## 
-## Borough: Staten Island
-## 
-## # A tibble: 6 × 2
-##   SourceYear Spanish
-##   <chr>        <int>
-## 1 2017-2018       12
-## 2 2020-2021       13
-## 3 2021-2022       14
-## 4 2022-2023       14
-## 5 2023-2024       14
-## 6 2024-2025       15
 ```
 
 ## Output
