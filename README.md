@@ -2,27 +2,14 @@
 - author: "Tomonori Nagano"
 - date: "2026-01-20"
 
-<style>
-analysis-alt {
-  font-family: "Georgia", serif;
-  font-size: 12pt;
-  line-height: 1.6;
-  background: #f6f3e9;
-  border-left: 4px solid #c49a6c;
-  padding: 12px 12px 6px 12px;
-  margin: 4px 0 16px 0;
-}
-</style>
-
 ## Introduction
 
 This analysis compares bilingual/dual language programs available across five boroughs of New York City between 2017-2024.
 
 ## Data
 
-<div class="analysis-alt">
+[!IMPORTANT]
 <b>My comments</b>: Data about bilingual/dual language programs are available on the NYC Open Data (between 2017-2021) and on the NYC DOE InfoHub (after 2022).
-</div>
 
 Raw program lists and LEP language counts are loaded from these project files:
 
