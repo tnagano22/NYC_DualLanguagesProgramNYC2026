@@ -3,7 +3,7 @@
 - date: "2026-01-20"
 
 <style>
-.analysis-alt {
+analysis-alt {
   font-family: "Georgia", serif;
   font-size: 12pt;
   line-height: 1.6;
