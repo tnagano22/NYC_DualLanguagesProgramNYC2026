@@ -63,6 +63,7 @@ program_2024_2025 <- program_2024_2025 %>% mutate(SourceYear = "2024-2025")
 
 <div style="height:40px"></div>
 ### Overall numbers
+
 > [!NOTE] 
 > <b>My comments</b>: The number of bilingual/dual language programs continued to grow between 2017 and 2024. This was a little bit surprising given a series of setbacks that DOE and bilingual/dual language programs experienced, particularly after 2020, such as COVID-19 and the Times' podcast series "Nice White Parents" in 2020.
 
