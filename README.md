@@ -63,9 +63,8 @@ program_2024_2025 <- program_2024_2025 %>% mutate(SourceYear = "2024-2025")
 
 <div style="height:40px"></div>
 ### Overall numbers
-<div class="analysis-alt">
-<b>My comments</b>: The number of bilingual/dual language programs continued to grow between 2017 and 2024. This was a little bit surprising given a series of setbacks that DOE and bilingual/dual language programs experienced, particularly after 2020, such as COVID-19 and the Times' podcast series "Nice White Parents" in 2020.
-</div>
+> [!NOTE] 
+> <b>My comments</b>: The number of bilingual/dual language programs continued to grow between 2017 and 2024. This was a little bit surprising given a series of setbacks that DOE and bilingual/dual language programs experienced, particularly after 2020, such as COVID-19 and the Times' podcast series "Nice White Parents" in 2020.
 
 - Count total program rows by year to show overall volume trends.
 
@@ -120,9 +119,9 @@ language_by_year_table <- language_by_year %>%
 
 <div style="height:40px"></div>
 ### By languages
-<div class="analysis-alt">
-<b>My comments</b>: The growth of bilingual/dual language programs (DLP) between 2017 and 2024 is primarily due to the increase in DLP in Spanish. In fact, most languages either lost programs (such as French, Bengali, and Haitian Creole) or lost all programs (such as Hebrew and Japanese). Chinese, which is spoken by about 7% of the total NYC population, did not see much increase during this period. Spanish, which is spoken by about 24% of the total NYC population, is the primary source of the increase in DLP programs over the past decade.
-</div>
+
+> [!NOTE] 
+> <b>My comments</b>: The growth of bilingual/dual language programs (DLP) between 2017 and 2024 is primarily due to the increase in DLP in Spanish. In fact, most languages either lost programs (such as French, Bengali, and Haitian Creole) or lost all programs (such as Hebrew and Japanese). Chinese, which is spoken by about 7% of the total NYC population, did not see much increase during this period. Spanish, which is spoken by about 24% of the total NYC population, is the primary source of the increase in DLP programs over the past decade.
 
 - Transpose the table to show all languages as rows and years as columns.
 
@@ -160,9 +159,8 @@ language_by_year_table_t
 write_csv(language_by_year_table, file.path(output_dir, "year_by_language.csv"))
 ```
 
-<div class="analysis-alt">
-<b>My comments</b>: If you plot the data, the difference between Spanisn and the other languages becomes more obvious.
-</div>
+> [!NOTE] 
+> <b>My comments</b>: If you plot the data, the difference between Spanisn and the other languages becomes more obvious.
 
 - Plot top languages over time to visualize trends.
 
@@ -233,9 +231,9 @@ write_csv(borough_by_year, file.path(output_dir, "borough_by_year.csv"))
 
 <div style="height:40px"></div>
 ### By boroughs
-<div class="analysis-alt">
-<b>My comments</b>: In terms of boroughs, Queens has led the growth of bilingual/dual language programs (DLPs) in the past decade. Brooklyn was known as the hub of DLPs until 2020, but its growth has stalled since then (maybe because of the Nice White Parents). The Bronx had a major increase between 2017 and 2020, but it has experienced a declining trend since then (maybe because of COVID-19). It's not entirely clear why Queens never experienced the setback that Brooklyn and the Bronx experienced in 2020. Staten Island has a very small number of DLPs, but the number is slowly increasing.
-</div>
+
+> [!NOTE] 
+> <b>My comments</b>: In terms of boroughs, Queens has led the growth of bilingual/dual language programs (DLPs) in the past decade. Brooklyn was known as the hub of DLPs until 2020, but its growth has stalled since then (maybe because of the Nice White Parents). The Bronx had a major increase between 2017 and 2020, but it has experienced a declining trend since then (maybe because of COVID-19). It's not entirely clear why Queens never experienced the setback that Brooklyn and the Bronx experienced in 2020. Staten Island has a very small number of DLPs, but the number is slowly increasing.
 
 - Pivot borough counts into a wide year-by-borough table.
 
@@ -308,9 +306,9 @@ borough_by_year %>%
 
 <div style="height:40px"></div>
 ### Languages in each borough
-<div class="analysis-alt">
-<b>My comments</b>: Almost all DLP programs in the Bronx are Spanish (the only non-Spanish DLP in the Bronx is one Bengali DLP). The loss of DLP in the Bronx in the last decade is particularly perplexing since there was a major growth in Spanish DLP overall during the same period. Brooklyn reflects the general trend of DLP in NYC such that there was an increase in Spanish DLP while DLP programs in other languages were lost. Overall, Brooklyn has more DLP programs, but they are less diverse in terms of languages. In Manhattan, there was not much change in the last decade except that there was some increase in Spanish DLP and a decrease in Chinese DLP. Queens has seen a major increase of Spanish DLP — there were 77 Spanish DLP in 2017, which grew to 111 in 2024. There has been little change in Staten Island.
-</div>
+
+> [!NOTE] 
+> <b>My comments</b>: Almost all DLP programs in the Bronx are Spanish (the only non-Spanish DLP in the Bronx is one Bengali DLP). The loss of DLP in the Bronx in the last decade is particularly perplexing since there was a major growth in Spanish DLP overall during the same period. Brooklyn reflects the general trend of DLP in NYC such that there was an increase in Spanish DLP while DLP programs in other languages were lost. Overall, Brooklyn has more DLP programs, but they are less diverse in terms of languages. In Manhattan, there was not much change in the last decade except that there was some increase in Spanish DLP and a decrease in Chinese DLP. Queens has seen a major increase of Spanish DLP — there were 77 Spanish DLP in 2017, which grew to 111 in 2024. There has been little change in Staten Island.
 
 - Plot top languages by borough for the latest year.
 
