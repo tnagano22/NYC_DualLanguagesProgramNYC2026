@@ -2,6 +2,8 @@
 - author: "Tomonori Nagano"
 - date: "2026-01-20"
 
+<link rel="stylesheet" href="assets/style.css">
+
 ## Introduction
 
 This analysis compares bilingual/dual language programs available across five boroughs of New York City between 2017-2024.
@@ -41,11 +43,6 @@ Data notes:
 
 
 ## Analysis Scripts
-
-
-
-
-
 
 ``` r
 program_2017_2018 <- read_csv("data/raw/anticipated_bilingual_programs_2017_2018.csv")
