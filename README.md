@@ -1,4 +1,4 @@
-- title: "Dual Language Programs in NYC Public Schools between 2017-2024"
+# Dual Language Programs in NYC Public Schools between 2017-2024
 - author: "Tomonori Nagano"
 - date: "2026-01-20"
 
